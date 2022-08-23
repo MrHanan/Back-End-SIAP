@@ -15,6 +15,11 @@ module.exports = (mongoose) => {
             catatan: {
                 type: String,
             },
+            surat: {
+                type: String,
+                required: true
+            },
+
         },
         {
             timestamps: true,

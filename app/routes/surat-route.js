@@ -1,13 +1,13 @@
 module.exports = (app) => {
-    const surat = require('../controllers/surat-controlller')
+    const surat = require('../controllers/surat-controller')
     const router = require('express').Router()
 
-    router.get('/', letters.findAll)
-    router.post('/', letters.create)
-    router.get('/:id', letters.findOne)
-    router.delete('/:id', letters.delete)
-    router.get('/search/surat', letters.findByName)
+    router.get('/', surat.findAll)
+    router.post('/', surat.create)
+    router.get('/:id', surat.findOne) 
+    router.put('/:id', surat.update)
+    router.delete('/:id', surat.delete)
 
 
-    app.use("/api/letters", router)
+    app.use("/api/surat", router)
 }

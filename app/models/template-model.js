@@ -9,7 +9,7 @@ module.exports = (mongoose) => {
                 type: String,
                 required: true,
             },
-            surat: {
+            temp: {
                 type: String,
                 required: true,
             }, 
@@ -24,7 +24,7 @@ module.exports = (mongoose) => {
         return object;
     });
 
-    const Template = mongoose.model("template", schema);
+    const Template = mongoose.model("templates", schema);
     return Template;
 
 }

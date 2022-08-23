@@ -10,7 +10,7 @@ const ADDRESS = process.env.NODE_ENV !== "production" ? "localhost" : "0.0.0.0";
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         //Setting destination of uploading files
-        if(file.fieldname === "template"){
+        if(file.fieldname === "temp"){
             // If uploading template
             cb(null, "public/templates")  
         } else if (file.fieldname === "surat"){
@@ -23,8 +23,8 @@ const fileStorage = multer.diskStorage({
     }
 })
 
-const fileFilter = (req, file, db) => {
-    if (file.fieldname === "template"){
+const fileFilter = (req, file, cb) => {
+    if (file.fieldname === "temp"){
         if(
             file.mimetype === "application/pdf" ||
             file.mimetype === "application/msword" ||
@@ -67,8 +67,8 @@ app.use(express.urlencoded({
 }))
 
 //change directory to public
-app.use("./public/template/", express.static("./public/template/"))
-app.use("/public/letters", express.static("/public/letters"))
+app.use("/public/template", express.static("/public/template"))
+app.use("/public/letter", express.static("/public/letter"))
 
 // // Setup pdf-thumbnail
 // app.get('/thumbnail', (req, res) => {
@@ -110,6 +110,10 @@ app.use(
         fileFilter: fileFilter,
     }).fields([
         {
+            name: "temp",
+            maxCount: 1
+        },
+        {
             name: "surat",
             maxCount: 1
         }
@@ -118,20 +122,18 @@ app.use(
 
 // Configurasi mongoose
 const db = require("./app/models/");
-console.log(db.mongoose.connect())
 db.mongoose
-  .connect(db.url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("Database connected!");
-  })
-  .catch((err) => {
-    console.log("Cannot connect to the database!", err);
-    process.exit();
-  });
-
+    .connect(db.url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+    .then(() => {
+        console.log("Database connected")
+    })
+    .catch((err) => {
+        console.log("Cannot connect to the database", err)
+        process.exit()
+    })
 
 // Directory Home
 app.get("/", (req, res) => {

@@ -1,28 +1,33 @@
 const db = require ('../models')
-const Profil = db.profiles;
+const Admin = db.admin;
 const getRespond = require('../../utils/respond')
-const fs = require('fs')
 
 
-exports.findAll() = (req, res) => {
-  Profil.find()
+exports.findAll = (req, res) => {
+  Admin.find()
     .then((result) => {
+      console.log(result)
       res.send(getRespond(true, "", result))
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "some error while retrieving posts"
+      })
     })
 }
 
 exports.create = (req, res) => {
-  const profil = new Profil({
+  const admin = new Admin({
     nama: req.body.nama,
     email: req.body.email,
     password: req.body.password,
     instansi: req.body.instansi,
     alamat: req.body.alamat,
-    tlp: req.body.telp
+    tlp: req.body.tlp
   })
 
-  profil
-    .save(post)
+  admin
+    .save(admin)
     .then((result) => {
       res.send(result)
     })
@@ -60,9 +65,9 @@ exports.create = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id
 
-  Profil.findById(id)
+  Admin.findById(id)
     .then((result) => {
-      res.send(getRespond(true, "Profil", result))
+      res.send(getRespond(true, "Admin", result))
     })
     .catch((err) => {
       res.status(409).send({
@@ -74,7 +79,7 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
   
-    Profil.findByIdAndUpdate(id, req.body)
+    Admin.findByIdAndUpdate(id, req.body)
       .then((result) => {
         if (!result) {
           res.status(404).send({
@@ -95,7 +100,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const id = req.params.id;
   
-    Profil.findByIdAndRemove(id)
+    Admin.findByIdAndRemove(id)
       .then((result) => {
         if (!result) {
           res.status(404).send({
@@ -103,7 +108,7 @@ exports.delete = (req, res) => {
           });
         } 
         res.send({
-          message: "Profil telah diperbarui",
+          message: "Profil telah dihapus",
         });
       })
       .catch((err) => {

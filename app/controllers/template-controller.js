@@ -17,7 +17,8 @@ exports.findAll = (req, res) => {
 }
 
 exports.create = (req, res) => {
-    if (req.files.surat === undefined){
+    console.log(req)
+    if (req.files.temp === undefined){
         const err = "Unggah Template!"
 
         res.status(422).send({
@@ -26,11 +27,11 @@ exports.create = (req, res) => {
         })
     }
 
+    console.log(req.files)
     const template = new Template({
         nama: req.body.nama,
         desc: req.body.desc,
-        // thumbnail:
-        surat: req.files.surat[0].path.replace("\\", "/"), 
+        temp: req.files.temp[0].path.replace("\\", "/"), 
     })
 
     template
@@ -87,28 +88,27 @@ exports.findByName = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id
 
-    let surat = null
+    let temp = null
 
-    if(req.files.surat === undefined){
-        surat = req.body.surat
+    if(req.files.temp === undefined){
+        temp = req.body.temp
     } else {
-        surat = req.files.surat[0].path.replace("\\", "/")
+        temp = req.files.temp[0].path.replace("\\", "/")
     }
 
     const template = {
         nama: req.body.nama,
         desc: req.body.desc,
-        surat,
+        temp,
     }
-
-    Template.findbyIdAndUpdate(id, template)
+    
+    Template.findByIdAndUpdate(id, template)
         .then((result) => {
             if(!result){
                 res.status(404).send({
                     message: "Template surat tidak ditemukan"
                 })
             }
-
             res.send({
                 message: "Template surat telah diperbarui"
             })
@@ -131,7 +131,7 @@ exports.delete = (req, res) => {
                 })
             }
             try {
-                fs.unlinkSync(result, surat)
+                fs.unlinkSync(result.temp)
             } catch (err) {
                 console.log(err.message)
             } 

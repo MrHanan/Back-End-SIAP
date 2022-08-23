@@ -1,7 +1,7 @@
 module.exports = (mongoose) => {
     const schema = mongoose.Schema(
         {
-            Name: {
+            nama: {
                 type: String,
                 required: true,
             },
@@ -36,6 +36,6 @@ module.exports = (mongoose) => {
         return object;
     });
 
-    const Profile = mongoose.model("profile", schema);
-    return Profile;
+    const Admin = mongoose.model("admin", schema);
+    return Admin;
 }
