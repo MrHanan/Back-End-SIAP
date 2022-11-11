@@ -8,7 +8,7 @@ const db = {}
 db.mongoose = mongoose;
 db.url = dbConfig.url;
 
-db.admin = require("./profile-model")(mongoose);
+db.user = require("./profile-model")(mongoose);
 db.surat = require("./surat-model")(mongoose);
 db.templates = require("./template-model")(mongoose);
 

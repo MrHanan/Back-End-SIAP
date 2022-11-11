@@ -1,33 +1,35 @@
 const db = require ('../models')
-const Admin = db.admin;
+const User = db.user;
 const getRespond = require('../../utils/respond')
+const fs = require('fs')
 
 
 exports.findAll = (req, res) => {
-  Admin.find()
+  User.find()
     .then((result) => {
       console.log(result)
       res.send(getRespond(true, "", result))
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "some error while retrieving posts"
+        message: err.message || "terjadi kesalahan saat mengambil data pengguna"
       })
     })
 }
 
 exports.create = (req, res) => {
-  const admin = new Admin({
+  const user = new User({
     nama: req.body.nama,
     email: req.body.email,
     password: req.body.password,
     instansi: req.body.instansi,
     alamat: req.body.alamat,
-    tlp: req.body.tlp
+    tlp: req.body.tlp,
+    role: req.body.role
   })
 
-  admin
-    .save(admin)
+  user
+    .save(user)
     .then((result) => {
       res.send(result)
     })
@@ -38,6 +40,7 @@ exports.create = (req, res) => {
       let instansiError = "";
       let alamatError = "";
       let tlpError = "";
+      let roleError = "";
       if (err.errors.nama){
         namaError = err.errors.nama.kind;
       }
@@ -56,8 +59,11 @@ exports.create = (req, res) => {
       if (err.errors.tlp){
         tlpError = err.errors.tlp.kind;
       }
+      if (err.errors.role){
+        roleError = err.errors.role.kind;
+      }
       res.status(409).send({
-        message: err.message || "Some error while create user."
+        message: err.message || "Terjadi kesalahan saat membuat pengguna."
       })
     })
 }
@@ -65,13 +71,13 @@ exports.create = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id
 
-  Admin.findById(id)
+  User.findById(id)
     .then((result) => {
-      res.send(getRespond(true, "Admin", result))
+      res.send(getRespond(true, "User", result))
     })
     .catch((err) => {
       res.status(409).send({
-        message: err.message || "Some error while show user"
+        message: err.message || "Terjadi kesalahan saat menampilkan pengguna"
       })
     })
 }
@@ -79,20 +85,20 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
   
-    Admin.findByIdAndUpdate(id, req.body)
+    User.findByIdAndUpdate(id, req.body)
       .then((result) => {
         if (!result) {
           res.status(404).send({
-            message: "Profil tidak diketahui",
+            message: "Pengguna tidak diketahui",
           });
         } 
         res.send({
-          message: "Profil telah diperbarui",
+          message: "Pengguna telah diperbarui",
         });
       })
       .catch((err) => {
         res.status(409).send({
-          message: err.message || "Terdapat kesalahan saat memperbarui profil.",
+          message: err.message || "Terdapat kesalahan saat memperbarui pengguna.",
             });
         });
 };
@@ -100,20 +106,20 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const id = req.params.id;
   
-    Admin.findByIdAndRemove(id)
+    User.findByIdAndRemove(id)
       .then((result) => {
         if (!result) {
           res.status(404).send({
-            message: "Profil tidak diketahui",
+            message: "Pengguna tidak diketahui",
           });
         } 
         res.send({
-          message: "Profil telah dihapus",
+          message: "Pengguna telah dihapus",
         });
       })
       .catch((err) => {
         res.status(409).send({
-          message: err.message || "Terdapat kesalahan saat memperbarui profil.",
+          message: err.message || "Terdapat kesalahan saat menghapus pengguna.",
         });
       });
 };

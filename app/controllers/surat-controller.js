@@ -12,27 +12,34 @@ exports.findAll = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "some error while retrieving letter"
+        message: err.message || "Terdapat kesalahan saat mengambil data surat surat"
       })
     })
 }
 
-exports.create = (req, res) => {
-    if (req.files.surat === undefined){
-        const err = "Unggah Surat!"
+// Misalkan tambahkan export surat acc
+// copas update ganti cuma signature
 
-        res.status(422).send({
-            file: err,
-            message: err.message || "Terdapat kesalahan saat menggunggah surat."
-        })
-    }
+exports.create = (req, res) => {
+    // if (req.files.surat === undefined){
+    //     const err = "Unggah Surat!"
+
+    //     res.status(422).send({
+    //         file: err,
+    //         message: err.message || "Terdapat kesalahan saat menggunggah surat."
+    //     })
+    // }
 
   const surat = new Surat({
+    nomorSurat: req.body.nomorSurat,
     namaPemohon: req.body.namaPemohon,
     namaPenerima: req.body.namaPenerima,
     jenisSurat: req.body.jenisSurat,
-    catatan: req.body.catatan,
-    surat: req.files.surat[0].path.replace("\\", "/"),
+    tanggalSurat: req.body.tanggalSurat,
+    hariKegiatan: req.body.hariKegiatan,
+    tanggalKegiatan: req.body.tanggalKegiatan,
+    waktuKegiatan: req.body.waktuKegiatan,
+    tempatKegiatan: req.body.tempatKegiatan,
   })
 
   surat
@@ -41,10 +48,19 @@ exports.create = (req, res) => {
       res.send(getRespond(true, "Surat telah diunggah", result))
     })
     .catch((err) => {
+      let nomorSuratError = "";
       let namaPemohonError = "";
       let namaPenerimaError = "";
       let jenisSuratError = "";
-      let catatanError = "";
+      let tanggalSuratError = "";
+      let hariKegiatanError = "";
+      let tanggalKegiatanError = "";
+      let waktuKegiatanError = "";
+      let tempatKegiatanError = "";
+
+      if (err.errors.nomorSurat){
+        nomorSuratError = err.errors.nomorSurat.kind;
+      }
       if (err.errors.namaPemohon){
         namaPemohonError = err.errors.namaPemohon.kind;
       }
@@ -54,12 +70,25 @@ exports.create = (req, res) => {
       if (err.errors.jenisSurat){
         jenisSuratError = err.errors.jenisSurat.kind;
       }
-      if (err.errors.catatan){
-        catatanError = err.errors.catatan.kind;
+      if (err.errors.tanggalSurat){
+        tanggalSuratError = err.errors.tanggalSurat.kind;
+      }
+      if (err.errors.hariKegiatan){
+        hariKegiatanError = err.errors.hariKegiatan.kind;
+      }
+      if (err.errors.tanggalKegiatan){
+        tanggalKegiatanError = err.errors.tanggalKegiatan.kind;
+      }
+      if (err.errors.waktuKegiatan){
+        waktuKegiatanError = err.errors.waktuKegiatan.kind;
+      }
+      if (err.errors.tempatKegiatan){
+        tempatKegiatanError = err.errors.tempatKegiatan.kind;
       }
 
+
       res.status(409).send({
-        message: err.message || "Some error while create letter."
+        message: err.message || "Terdapat kesalahan saat membuat surat surat."
       })
     })
 }
@@ -74,7 +103,7 @@ exports.findOne = (req, res) => {
     })
     .catch((err) => {
       res.status(409).send({
-        message: err.message || "Some error while show surat"
+        message: err.message || "Terdapat kesalahan saat menampilkan surat surat"
       })
     })
 }
@@ -90,11 +119,15 @@ exports.update = (req, res) => {
     }
 
     const surat = {
+        nomorSurat: req.body.nomorSurat,
         namaPemohon: req.body.namaPemohon,
         namaPenerima: req.body.namaPenerima,
         jenisSurat: req.body.jenisSurat,
-        catatan: req.body.catatan,
-        letter,
+        tanggalSurat: req.body.tanggalSurat,
+        hariKegiatan: req.body.hariKegiatan,
+        tanggalKegiatan: req.body.tanggalKegiatan,
+        waktuKegiatan: req.body.waktuKegiatan,
+        tempatKegiatan: req.body.tempatKegiatan,
     }
   
     Surat.findByIdAndUpdate(id, req.body)
@@ -113,6 +146,49 @@ exports.update = (req, res) => {
           message: err.message || "Terdapat kesalahan saat memperbarui surat.",
             });
         });
+};
+
+// Update ACC
+exports.updateAcc = (req, res) => {
+  const id = req.params.id;
+
+  let pesan = "";
+  let signature = "";
+
+  if(req.body.pesan != null){
+    pesan = req.body.pesan
+  } else {
+    signature = "http://localhost:5000/image/kepsek.png";
+  }
+  
+  const surat = {
+      pesan : pesan,
+      signature: signature, //Masukin gambar
+      //Tambahkan pesan
+  }
+
+  Surat.findByIdAndUpdate(id, surat)
+    .then((result) => {
+      if (!result) {
+        res.status(404).send({
+          message: "Tanda tangan tidak diketahui",
+        });
+      } 
+      if (req.body.pesan != null){
+        res.send({
+          message: "Surat telah ditolak",
+        });
+      } else {
+        res.send({
+          message: "Surat telah ditandatangani",
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(409).send({
+        message: err.message || "Terdapat kesalahan saat memperbarui surat.",
+          });
+      });
 };
 
 exports.delete = (req, res) => {
@@ -136,7 +212,7 @@ exports.delete = (req, res) => {
       })
       .catch((err) => {
         res.status(409).send({
-          message: err.message || "Terdapat kesalahan saat memperbarui surat.",
+          message: err.message || "Terdapat kesalahan saat menghapus surat.",
         });
       });
 };

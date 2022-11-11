@@ -1,12 +1,13 @@
 module.exports = (app) => {
-    const admin = require('../controllers/profile-controller')
+    const user = require('../controllers/profile-controller')
     const router = require('express').Router()
 
-    router.get('/', admin.findAll)
-    router.post('/', admin.create)
-    router.get('/:id', admin.findOne)
-    router.put('/:id', admin.update)
-    router.delete('/:id', admin.delete)
+    router.get('/', user.findAll)
+    router.post('/', user.create)
+    router.get('/:id', user.findOne)
+    router.put('/:id', user.update)
+    router.delete('/:id', user.delete)
+    
 
-    app.use('/api/admin', router)
+    app.use('/api/user', router)
 }

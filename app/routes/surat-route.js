@@ -7,6 +7,7 @@ module.exports = (app) => {
     router.get('/:id', surat.findOne) 
     router.put('/:id', surat.update)
     router.delete('/:id', surat.delete)
+    router.put('/acc/:id', surat.updateAcc)
 
 
     app.use("/api/surat", router)
